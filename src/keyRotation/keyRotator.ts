@@ -23,7 +23,7 @@ export class KeyRotator {
      * Rotate the Access Key(s) for a given IAM User
      * @param user the IAM User
      */
-    public rotateKeys(user: string) {
+    public rotateKeys = (user: string) => {
         return this.getExistingKeys(user)
             .then((keys) => this.performKeyRotation(user, keys))
             .catch((err) => {
