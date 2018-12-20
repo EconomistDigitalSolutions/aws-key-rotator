@@ -1,0 +1,65 @@
+{
+  "name": "aws-key-rotate",
+  "version": "1.0.0",
+  "description": "AWS Access Key Rotation",
+  "main": "build/index.js",
+  "scripts": {
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "clean": "rm -rf .build && rm -rf .serverless",
+    "build": "npm run lint && tsc",
+    "clean-build": "npm run clean && npm run build",
+    "test": "jest --coverage"
+  },
+  "author": "Dom Parfitt",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "aws-sdk": "^2.374.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.15",
+    "@types/fetch-mock": "^6.0.4",
+    "@types/jest": "^23.3.10",
+    "@types/node": "^10.12.14",
+    "@types/promise.prototype.finally": "^2.0.2",
+    "@types/uuid": "^3.4.4",
+    "aws-sdk-mock": "^4.3.0",
+    "fetch-mock": "^7.2.5",
+    "jest": "^23.6.0",
+    "jest-junit": "^5.2.0",
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.2",
+    "uuid": "^3.3.2"
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "coverageDirectory": "test-results/jest/",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/src/**"
+    ],
+    "reporters": [
+      "default",
+      "jest-junit"
+    ]
+  },
+  "jest-junit": {
+    "outputDirectory": "test-results/jest",
+    "outputName": "./js-test-results.xml",
+    "usePathForSuiteName": "true"
+  }
+}
