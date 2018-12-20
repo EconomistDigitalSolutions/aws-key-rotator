@@ -3,8 +3,9 @@ import { IAM } from "aws-sdk";
 import * as AWS from "aws-sdk-mock";
 import { AccessKey, AccessKeyMetadata, CreateAccessKeyRequest, DeleteAccessKeyRequest, ListAccessKeysRequest, UpdateAccessKeyRequest } from "aws-sdk/clients/iam";
 import * as uuidv4 from "uuid/v4";
-import { KeyRotator, NewKeyHandler } from "./keyRotator";
+import { KeyRotator } from "./keyRotator";
 import { ACTIVE, INACTIVE } from "./keyStatus";
+import { NewKeyHandler } from "./newKeyHandler";
 
 const user = 'TestUser';
 
