@@ -1,14 +1,26 @@
 # aws-key-rotator
 `aws-key-rotator` provides functionality for rotating AWS Access Keys with customised handling for propagating a newly created key.
 
-A typical example of its usage is for automatically updating the Access Keys for a project's CI/CD service.
+A typical usage example is automatically updating the Access Keys for a project's CI/CD service.
 
 # Usage
+## Pre-Requisites
+1. The User(s) that you wish to rotate Access Keys for must be set up in AWS IAM.
+2. The User(s) must have at most 1 active Access Key.
+3. The code that calls KeyRotator must have IAM permissions to perform the following actions for the required User(s):
+    ```
+    iam:ListAccessKeys
+    iam:DeleteAccessKey
+    iam:CreateAccessKey
+    iam:UpdateAccessKey
+    ```
+
+## Steps
 1. Add `aws-key-rotator` as a dependency in your `package.json` file.
     ```bash
     npm install aws-key-rotator
     ```
-2. Add imports for the library in your code as required.
+2. Add imports in your code as required.
     ```typescript
     import { KeyRotator, NewKeyHandler } from "aws-key-rotator"
     ```
@@ -30,6 +42,15 @@ A typical example of its usage is for automatically updating the Access Keys for
         .then(() => { /* your 'on success' code here */ })
         .catch((err) => { /* your 'on failure' code here */ });
     ```
+
+## Error Handling
+If any error occurs as part of the call to the `rotateKeys` method then the `KeyRotator` will cease processing, perform some clean-up and return the error to the caller in the form of a rejected `Promise` containing the error.
+
+Any errors that occur after the user's existing key(s) have been retrieved will trigger a clean-up stage that attempts to delete any inactive keys from the list of existing keys. AWS restricts users to having at most 2 Access Keys at any one time therefore rotation will fail if 2 keys are present as a new key cannot be created. Deleting inactive keys ensures that the `KeyRotator` can "self-heal" from this state and should allow it run successfully on its next attempt.
+
+Additionally, if the user-defined `NewKeyHandler` function returns a rejected `Promise`, indicating that the required handling failed, then the `KeyRotator` will delete the newly created Access Key ensuring that the user is not left with an unusable, active Access Key.
+
+This ensures that any errors that occur during key rotation will not result in the user's access keys being left in a bad state (e.g. no active keys, 2 different active keys, etc.).
 
 # API
 
