@@ -2,7 +2,7 @@
   "name": "aws-key-rotate",
   "version": "1.0.0",
   "description": "AWS Access Key Rotation",
-  "main": "build/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "clean": "rm -rf lib",
