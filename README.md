@@ -49,7 +49,7 @@ If any of the above steps fail then the [KeyRotator](#KeyRotator) will perform s
    ```typescript
    const iam = new IAM();
    ```
-4. Define a custom function which matches the [NewKeyHandler](#NewKeyHandler) interface.
+4. Define a custom function which matches the [NewKeyHandler](#NewKeyHandler) interface. ***Make sure that your function correctly reports any failures to propagate the new key. Failure to do so may result in unusable keys in IAM that will need to be manually removed.***
    ```typescript
    const newKeyHandler = (key: AccessKey) => { /* your code here */ };
    ```
