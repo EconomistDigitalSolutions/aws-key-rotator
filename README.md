@@ -1,4 +1,16 @@
 # aws-key-rotator
+
+# Contents
+1. [Overview](#Overview)
+2. [Usage](#Usage)
+   - [Pre-Requisites](#Pre-Requisites)
+   - [Steps](#Steps)
+   - [Error Handling](#Error-Handling)
+3. [API](#API)
+   - [KeyRotator](#KeyRotator)
+   - [NewKeyHandler](#NewKeyHandler)
+
+# Overview
 `aws-key-rotator` provides functionality for rotating AWS Access Keys with customised handling for propagating a newly created key.
 
 A typical usage example is automatically updating the Access Keys for a project's CI/CD service.
