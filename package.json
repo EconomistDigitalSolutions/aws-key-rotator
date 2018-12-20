@@ -1,5 +1,5 @@
 {
-  "name": "aws-key-rotator",
+  "name": "@economist/aws-key-rotator",
   "version": "1.0.0",
   "description": "AWS Access Key Rotation",
   "main": "lib/index.js",
