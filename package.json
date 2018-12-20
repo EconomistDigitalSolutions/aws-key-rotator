@@ -1,8 +1,9 @@
 {
-  "name": "aws-key-rotate",
+  "name": "aws-key-rotator",
   "version": "1.0.0",
   "description": "AWS Access Key Rotation",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "clean": "rm -rf lib",
@@ -13,6 +14,10 @@
   "author": {
     "name": "Dom Parfitt",
     "email": "dominicparfitt@economist.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EconomistDigitalSolutions/aws-key-rotator.git"
   },
   "license": "Apache-2.0",
   "dependencies": {
