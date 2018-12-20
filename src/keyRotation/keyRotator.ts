@@ -128,7 +128,7 @@ export class KeyRotator {
         });
 
         return Promise.all(promises)
-            .then((data) => Promise.resolve());
+            .then(() => Promise.resolve());
     }
 
     /**
