@@ -39,7 +39,7 @@ If any of the above steps fail then the [KeyRotator](#KeyRotator) will perform s
 ## Steps
 1. Add `aws-key-rotator` as a dependency in your `package.json` file.
     ```bash
-    npm install aws-key-rotator
+    npm install @economist/aws-key-rotator
     ```
 2. Add imports in your code as required.
     ```typescript
