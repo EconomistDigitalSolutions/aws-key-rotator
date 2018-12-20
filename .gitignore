@@ -62,3 +62,6 @@ typings/
 
 # Test output
 test-results
+
+# Build output
+lib
