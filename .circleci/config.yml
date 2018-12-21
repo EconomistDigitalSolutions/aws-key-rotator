@@ -1,0 +1,35 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:chakracore-browsers-legacy
+    steps:
+      - checkout
+      - run: 
+          name: Install dependencies
+          command: 'sudo npm install'
+      - run:
+          name: Build
+          command: 'npm run build'
+  test:
+    docker:
+      - image: circleci/node:chakracore-browsers-legacy
+    steps:
+      - checkout
+      - run: 
+          name: Install dependencies
+          command: 'sudo npm install'
+      - run:
+          name: Run unit tests
+          command: 'npm test -- --ci --reporters=jest-junit --runInBand'
+      - store_test_results:
+          path: test-results/jest
+      - store_artifacts:
+          path: test-results/jest
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test
