@@ -98,7 +98,7 @@ Rotates the access keys for a given user by creating a new key, propagating it a
 ***`user` -*** the name of the IAM User to rotate the access keys for.
 
 #### Returns
-A promise the resolves with no data if the key rotation was successful and rejects with an error if it was not.
+A `Promise` the resolves with no data if the key rotation was successful and rejects with an error if it was not.
 
 
 ## NewKeyHandler
@@ -110,4 +110,4 @@ An interface for defining a custom function that handles the newly created Acces
 ***`newKey` -*** an instance of an AccessKey object from the aws-sdk library that is returned as part of the [createNewAccessKey](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/IAM.html#createAccessKey-property) method.
 
 #### Returns
-A promise the resolves with no data if the new key handling was successful and rejects with an error if it was not.
+A `Promise` the resolves with no data if the new key handling was successful and rejects with an error if it was not.
