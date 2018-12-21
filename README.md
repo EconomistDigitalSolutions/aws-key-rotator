@@ -1,4 +1,5 @@
 # aws-key-rotator
+[![](https://img.shields.io/circleci/project/github/EconomistDigitalSolutions/aws-key-rotator/master.svg)](https://circleci.com/gh/EconomistDigitalSolutions/aws-key-rotator)
 
 # Contents
 1. [Overview](#Overview)
@@ -43,7 +44,7 @@ If any of the above steps fail then the [KeyRotator](#KeyRotator) will perform s
     ```
 2. Add imports in your code as required.
     ```typescript
-    import { KeyRotator, NewKeyHandler } from "@economist/aws-key-rotator"
+    import { KeyRotator, NewKeyHandler } from "@economist/aws-key-rotator";
     ```
 3. Create an instance of an AWS [IAM](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/IAM.html) object.
    ```typescript
