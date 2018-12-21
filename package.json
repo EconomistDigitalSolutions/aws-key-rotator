@@ -2,6 +2,10 @@
   "name": "@economist/aws-key-rotator",
   "version": "1.0.1",
   "description": "AWS Access Key Rotation",
+  "keywords": [
+    "aws",
+    "key-rotation"
+  ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
