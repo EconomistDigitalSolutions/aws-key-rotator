@@ -83,7 +83,7 @@ export class KeyRotator {
             .promise()
             .then((data) => {
                 const newKey = data.AccessKey;
-                console.log(`Created a new Access Key: ${JSON.stringify(newKey)}`);
+                console.log(`Created a new Access Key with ID: ${newKey.AccessKeyId}`);
                 return Promise.resolve(newKey);
             });
     }
