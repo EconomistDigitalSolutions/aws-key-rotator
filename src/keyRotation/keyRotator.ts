@@ -37,7 +37,7 @@ export class KeyRotator {
      * @param user the IAM User to get the Access Keys for
      */
     private getExistingKeys = (user: string): Promise<AccessKeyMetadata[]> => {
-        console.log(`Retrieving existing keys for User ${user}`);
+        console.log(`Retrieving existing keys for ${user}`);
         const params: ListAccessKeysRequest = {
             UserName: user,
         };
@@ -45,7 +45,7 @@ export class KeyRotator {
         return this.iam.listAccessKeys(params)
             .promise()
             .then((data) => {
-                console.log(`Retrieved the following keys for User ${user}: ${JSON.stringify(data.AccessKeyMetadata)}`);
+                console.log(`Retrieved the following keys for ${user}: ${JSON.stringify(data.AccessKeyMetadata)}`);
                 return Promise.resolve(data.AccessKeyMetadata);
             });
     }
@@ -58,7 +58,7 @@ export class KeyRotator {
     private performKeyRotation = (user: string, keys: AccessKeyMetadata[]) => {
         return this.performCoreKeyRotation(user, keys)
             .catch((err) => {
-                console.error(`The following error occured during key rotation: ${JSON.stringify(err)}`);
+                console.error(`There was an error during key rotation: ${JSON.stringify(err)}`);
                 return this.selfHeal(user, keys);
             });
     }
@@ -70,12 +70,16 @@ export class KeyRotator {
      * @param keys the Access Keys to rotate
      */
     private performCoreKeyRotation = (user: string, keys: AccessKeyMetadata[]) => {
-        console.log(`Performing key rotation.`);
+        console.log(`Beginning key rotation.`);
         return this.createNewKey(user)
             .then((key) => this.handleNewKey(user, key))
             .then(() => {
-                console.log("Deleting old keys.");
+                console.log(`Deleting old keys.`);
                 return this.deleteKeys(user, keys);
+            })
+            .then(() => {
+                console.log(`Key rotation for ${user} completed succesfully.`);
+                return Promise.resolve();
             });
     }
 
@@ -96,7 +100,7 @@ export class KeyRotator {
      * @param user the IAM User to create a new Access Key for
      */
     private createNewKey = (user: string): Promise<AccessKey> => {
-        console.log(`Creating a new Access Key for User: ${user}`);
+        console.log(`Creating a new Access Key for ${user}`);
 
         const params: CreateAccessKeyRequest = {
             UserName: user,
@@ -120,6 +124,10 @@ export class KeyRotator {
     private handleNewKey = (user: string, key: AccessKey) => {
         console.log(`Handling the newly created key.`);
         return this.newKeyHandler(key)
+            .then(() => {
+                console.log(`Successfully handled the new key.`);
+                return Promise.resolve();
+            })
             .catch((err) => {
                 console.error(`New Key Handler failed with error: ${JSON.stringify(err)}. New key will be deleted.`);
                 return this.deleteKey(user, key)
@@ -161,7 +169,7 @@ export class KeyRotator {
      * @param key the key to delete
      */
     private deleteKey = (user: string, key: AccessKeyMetadata) => {
-        console.log(`Deleting Access Key: ${key.AccessKeyId} for User ${user}`);
+        console.log(`Deleting Access Key: ${key.AccessKeyId} for ${user}`);
         const params: DeleteAccessKeyRequest = {
             AccessKeyId: key.AccessKeyId!,
             UserName: user,
