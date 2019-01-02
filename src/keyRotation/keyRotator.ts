@@ -56,8 +56,11 @@ export class KeyRotator {
      * @param keys the Access Keys to rotate
      */
     private performKeyRotation = (user: string, keys: AccessKeyMetadata[]) => {
-        return this.performKeyRotationSteps(user, keys)
-            .catch((err) => this.selfHeal(user, keys));
+        return this.performCoreKeyRotation(user, keys)
+            .catch((err) => {
+                console.error(`The following error occured during key rotation: ${JSON.stringify(err)}`);
+                return this.selfHeal(user, keys);
+            });
     }
 
     /**
@@ -66,10 +69,14 @@ export class KeyRotator {
      * @param user the IAM User that the Access Keys belong to
      * @param keys the Access Keys to rotate
      */
-    private performKeyRotationSteps = (user: string, keys: AccessKeyMetadata[]) => {
+    private performCoreKeyRotation = (user: string, keys: AccessKeyMetadata[]) => {
+        console.log(`Performing key rotation.`);
         return this.createNewKey(user)
             .then((key) => this.handleNewKey(user, key))
-            .then(() => this.deleteKeys(user, keys));
+            .then(() => {
+                console.log("Deleting old keys.");
+                return this.deleteKeys(user, keys);
+            });
     }
 
     /**
@@ -79,9 +86,9 @@ export class KeyRotator {
      * @param keys the Access Keys to rotate
      */
     private selfHeal = (user: string, keys: AccessKeyMetadata[]) => {
-        console.log(`Attempting to delete inactive keys`);
+        console.log(`Attempting to self-heal by deleting any inactive keys`);
         return this.deleteKeys(user, keys, (key) => key.Status === INACTIVE)
-            .then(() => this.performKeyRotationSteps(user, keys));
+            .then(() => this.performCoreKeyRotation(user, keys));
     }
 
     /**
@@ -111,6 +118,7 @@ export class KeyRotator {
      * @param key the key to pass to the NewKeyHandler
      */
     private handleNewKey = (user: string, key: AccessKey) => {
+        console.log(`Handling the newly created key.`);
         return this.newKeyHandler(key)
             .catch((err) => {
                 console.error(`New Key Handler failed with error: ${JSON.stringify(err)}. New key will be deleted.`);
