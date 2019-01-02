@@ -26,6 +26,7 @@ jobs:
           path: test-results/jest
       - store_artifacts:
           path: test-results/jest
+      - run: curl -s https://codecov.io/bash | bash
 
 workflows:
   version: 2
