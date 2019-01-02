@@ -1,5 +1,6 @@
 # aws-key-rotator
 [![](https://img.shields.io/circleci/project/github/EconomistDigitalSolutions/aws-key-rotator/master.svg)](https://circleci.com/gh/EconomistDigitalSolutions/aws-key-rotator)
+[![codecov](https://codecov.io/gh/EconomistDigitalSolutions/aws-key-rotator/branch/master/graph/badge.svg)](https://codecov.io/gh/EconomistDigitalSolutions/aws-key-rotator)
 
 # Contents
 1. [Overview](#Overview)
