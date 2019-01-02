@@ -51,21 +51,37 @@ export class KeyRotator {
     }
 
     /**
-     * Rotate the given Access Keys for the given IAM User.
+     * Performs the core key rotation steps and attempts to self-heal if there are any errors.
      * @param user the IAM User that the Access Keys belong to
      * @param keys the Access Keys to rotate
      */
     private performKeyRotation = (user: string, keys: AccessKeyMetadata[]) => {
+        return this.performKeyRotationSteps(user, keys)
+            .catch((err) => this.selfHeal(user, keys));
+    }
+
+    /**
+     * Performs the core key rotation steps: creating a new key, propagating it as required and
+     * deleting any old keys.
+     * @param user the IAM User that the Access Keys belong to
+     * @param keys the Access Keys to rotate
+     */
+    private performKeyRotationSteps = (user: string, keys: AccessKeyMetadata[]) => {
         return this.createNewKey(user)
             .then((key) => this.handleNewKey(user, key))
-            .then(() => this.deleteKeys(user, keys))
-            .catch((err) => {
-                // Try to self-heal by removing any inactive keys but still throw an error
-                // as we haven't created/handled the new key correctly
-                console.log(`Attempting to delete inactive keys`);
-                return this.deleteKeys(user, keys, (key) => key.Status === INACTIVE)
-                    .then(() => Promise.reject(err));
-            });
+            .then(() => this.deleteKeys(user, keys));
+    }
+
+    /**
+     * Performs a self-healing step by deleting any inactive keys and then re-running the
+     * core key rotation
+     * @param user the IAM User that the Access Keys belong to
+     * @param keys the Access Keys to rotate
+     */
+    private selfHeal = (user: string, keys: AccessKeyMetadata[]) => {
+        console.log(`Attempting to delete inactive keys`);
+        return this.deleteKeys(user, keys, (key) => key.Status === INACTIVE)
+            .then(() => this.performKeyRotationSteps(user, keys));
     }
 
     /**
