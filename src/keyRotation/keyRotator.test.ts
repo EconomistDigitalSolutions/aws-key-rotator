@@ -101,20 +101,20 @@ test('1 active and 1 inactive key', (done) => {
 
     keyRotator.rotateKeys(user)
         .then(() => {
-            fail();
-            done();
-        })
-        .catch((err) => {
             // Expect there to be 1 key
             expect(keys.length).toBe(1);
 
-            // Expect existing inactive key to have been removed
+            // Expect existing keys to have been removed
             expect(keys.indexOf(existingInactiveKey)).toBe(-1);
+            expect(keys.indexOf(existingActiveKey)).toBe(-1);
 
-            // Expect existing active key to be present and still active
-            expect(existingActiveKey.Status).toBe(ACTIVE);
-            expect(keys.indexOf(existingActiveKey)).toBeGreaterThanOrEqual(0);
-
+            // Expect new key to be present and active
+            expect(newKey.Status).toBe(ACTIVE);
+            expect(keys.indexOf(newKey)).toBeGreaterThanOrEqual(0);
+            done();
+        })
+        .catch((err) => {
+            fail();
             done();
         });
 });
@@ -128,17 +128,20 @@ test('2 inactive keys', (done) => {
 
     keyRotator.rotateKeys(user)
         .then(() => {
-            fail();
-            done();
-        })
-        .catch((err) => {
-            // Expect there to be 2 keys
-            expect(keys.length).toBe(0);
+            // Expect there to be 1 key
+            expect(keys.length).toBe(1);
 
-            // Expect both existing keys to have been removed
+            // Expect existing keys to have been removed
             expect(keys.indexOf(firstExistingKey)).toBe(-1);
             expect(keys.indexOf(secondExistingKey)).toBe(-1);
 
+            // Expect new key to be present and active
+            expect(newKey.Status).toBe(ACTIVE);
+            expect(keys.indexOf(newKey)).toBeGreaterThanOrEqual(0);
+            done(); done();
+        })
+        .catch((err) => {
+            fail();
             done();
 
         });
