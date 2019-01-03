@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:chakracore-browsers-legacy
+      - image: circleci/node:8
     steps:
       - checkout
       - run: 
@@ -13,7 +13,7 @@ jobs:
           command: 'npm run build'
   test:
     docker:
-      - image: circleci/node:chakracore-browsers-legacy
+      - image: circleci/node:8
     steps:
       - checkout
       - run: 
