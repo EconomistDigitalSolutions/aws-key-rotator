@@ -1,6 +1,6 @@
 {
   "name": "@economist/aws-key-rotator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "AWS Access Key Rotation",
   "keywords": [
     "aws",
