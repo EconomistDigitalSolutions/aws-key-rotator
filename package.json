@@ -13,7 +13,8 @@
     "clean": "rm -rf lib",
     "build": "npm run lint && tsc",
     "clean-build": "npm run clean && npm run build",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "prepublishOnly": "npm run clean-build"
   },
   "author": {
     "name": "Dom Parfitt",
