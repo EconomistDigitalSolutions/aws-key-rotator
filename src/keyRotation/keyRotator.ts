@@ -28,7 +28,7 @@ export class KeyRotator {
             .then((keys) => this.performKeyRotation(user, keys))
             .catch((err) => {
                 console.error(`There was an error during key rotation: ${JSON.stringify(err)}`);
-                return Promise.reject(err);
+                throw err;
             });
     }
 
@@ -46,7 +46,7 @@ export class KeyRotator {
             .promise()
             .then((data) => {
                 console.log(`Retrieved the following keys for ${user}: ${JSON.stringify(data.AccessKeyMetadata)}`);
-                return Promise.resolve(data.AccessKeyMetadata);
+                return data.AccessKeyMetadata;
             });
     }
 
@@ -77,10 +77,7 @@ export class KeyRotator {
                 console.log(`Deleting old keys.`);
                 return this.deleteKeys(user, keys);
             })
-            .then(() => {
-                console.log(`Key rotation for ${user} completed succesfully.`);
-                return Promise.resolve();
-            });
+            .then(() => console.log(`Key rotation for ${user} completed succesfully.`));
     }
 
     /**
@@ -111,7 +108,7 @@ export class KeyRotator {
             .then((data) => {
                 const newKey = data.AccessKey;
                 console.log(`Created a new Access Key with ID: ${newKey.AccessKeyId}`);
-                return Promise.resolve(newKey);
+                return newKey;
             });
     }
 
@@ -124,14 +121,11 @@ export class KeyRotator {
     private handleNewKey = (user: string, key: AccessKey) => {
         console.log(`Handling the newly created key.`);
         return this.newKeyHandler(key)
-            .then(() => {
-                console.log(`Successfully handled the new key.`);
-                return Promise.resolve();
-            })
+            .then(() => console.log(`Successfully handled the new key.`))
             .catch((err) => {
                 console.error(`New Key Handler failed with error: ${JSON.stringify(err)}. New key will be deleted.`);
                 return this.deleteKey(user, key)
-                    .then(() => Promise.reject(err));
+                    .then(() => { throw err; });
             });
     }
 
@@ -160,7 +154,7 @@ export class KeyRotator {
         });
 
         return Promise.all(promises)
-            .then(() => Promise.resolve());
+            .then(() => { return; });
     }
 
     /**
@@ -179,7 +173,7 @@ export class KeyRotator {
             .promise()
             .then((data) => {
                 console.log(`Deleted Access Key: ${params.AccessKeyId}`);
-                return Promise.resolve(data);
+                return data;
             });
     }
 }

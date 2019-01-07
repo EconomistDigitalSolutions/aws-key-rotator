@@ -115,7 +115,6 @@ test('1 active and 1 inactive key', (done) => {
         })
         .catch((err) => {
             fail();
-            done();
         });
 });
 
@@ -138,12 +137,10 @@ test('2 inactive keys', (done) => {
             // Expect new key to be present and active
             expect(newKey.Status).toBe(ACTIVE);
             expect(keys.indexOf(newKey)).toBeGreaterThanOrEqual(0);
-            done(); done();
+            done();
         })
         .catch((err) => {
             fail();
-            done();
-
         });
 });
 
@@ -157,7 +154,6 @@ test('2 active keys', (done) => {
     keyRotator.rotateKeys(user)
         .then(() => {
             fail();
-            done();
         })
         .catch((err) => {
             // Expect there to still be 2 keys
@@ -179,7 +175,6 @@ test('error getting existing keys', (done) => {
 
     keyRotator.rotateKeys(user)
         .then(() => {
-            fail();
             done();
         })
         .catch((err) => {
@@ -200,7 +195,6 @@ test('error deleting a key', (done) => {
     keyRotator.rotateKeys(user)
         .then(() => {
             fail();
-            done();
         })
         .catch((err) => {
             // Expect there to be 2 keys
@@ -224,7 +218,6 @@ test('error creating new key', (done) => {
     keyRotator.rotateKeys(user)
         .then(() => {
             fail();
-            done();
         })
         .catch((err) => {
             // Expect there to be 1 key
@@ -248,7 +241,6 @@ test('error handling new key', (done) => {
     keyRotator.rotateKeys(user)
         .then(() => {
             fail();
-            done();
         })
         .catch((err) => {
             // Expect there to be 1 key
