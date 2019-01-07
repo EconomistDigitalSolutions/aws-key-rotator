@@ -69,7 +69,7 @@ If any of the above steps fail then the [KeyRotator](#KeyRotator) will perform s
 ## Error Handling
 If any error occurs as part of the call to the [rotateKeys](#rotateKeys) method then the [KeyRotator](#KeyRotator) will cease processing, perform some clean-up and return the error to the caller in the form of a rejected `Promise` containing the error.
 
-Any errors that occur after the user's existing key(s) have been retrieved will trigger a clean-up stage that attempts to delete any inactive keys from the list of existing keys. AWS restricts users to having at most 2 Access Keys at any one time therefore rotation will fail if 2 keys are present as a new key cannot be created. Deleting inactive keys ensures that the [KeyRotator](#KeyRotator) can "self-heal" from this state and should allow it run successfully on its next attempt.
+Any errors that occur after the user's existing key(s) have been retrieved will trigger a clean-up stage that attempts to delete any inactive keys from the list of existing keys and then performs a re-run of the core rotation steps. AWS restricts users to having at most 2 Access Keys at any one time, therefore rotation will fail if 2 keys are present as a new key cannot be created. Deleting inactive keys ensures that the [KeyRotator](#KeyRotator) can "self-heal" from this state and should allow it to successfully rotate the keys on the re-run.
 
 Additionally, if the user-defined [NewKeyHandler](#NewKeyHandler) function returns a rejected `Promise`, indicating that the required handling failed, then the [KeyRotator](#KeyRotator) will delete the newly created Access Key ensuring that the user is not left with an unusable, active Access Key.
 
