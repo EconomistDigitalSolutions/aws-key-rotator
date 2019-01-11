@@ -1,6 +1,5 @@
-import { AWSError, IAM } from "aws-sdk";
+import { IAM } from "aws-sdk";
 import { AccessKey, AccessKeyMetadata, CreateAccessKeyRequest, DeleteAccessKeyRequest, ListAccessKeysRequest } from "aws-sdk/clients/iam";
-import { PromiseResult } from "aws-sdk/lib/request";
 import { INACTIVE } from "./keyStatus";
 import { NewKeyHandler } from "./newKeyHandler";
 
@@ -51,27 +50,14 @@ export class KeyRotator {
     }
 
     /**
-     * Performs the core key rotation steps and attempts to self-heal if there are any errors.
-     * @param user the IAM User that the Access Keys belong to
-     * @param keys the Access Keys to rotate
-     */
-    private performKeyRotation = (user: string, keys: AccessKeyMetadata[]) => {
-        return this.performCoreKeyRotation(user, keys)
-            .catch((err) => {
-                console.error(`There was an error during key rotation: ${JSON.stringify(err)}`);
-                return this.selfHeal(user, keys);
-            });
-    }
-
-    /**
      * Performs the core key rotation steps: creating a new key, propagating it as required and
      * deleting any old keys.
      * @param user the IAM User that the Access Keys belong to
      * @param keys the Access Keys to rotate
      */
-    private performCoreKeyRotation = (user: string, keys: AccessKeyMetadata[]) => {
+    private performKeyRotation = (user: string, keys: AccessKeyMetadata[]) => {
         console.log(`Beginning key rotation.`);
-        return this.createNewKey(user)
+        return this.createNewKey(user, keys)
             .then((key) => this.handleNewKey(user, key))
             .then(() => {
                 console.log(`Deleting old keys.`);
@@ -81,22 +67,26 @@ export class KeyRotator {
     }
 
     /**
-     * Performs a self-healing step by deleting any inactive keys and then re-running the
-     * core key rotation
+     * Creates a new Access Key and performs some self-healing if an error occurs during creation.
+     * If key creation fails then inactive keys will be deleted and the creation will be retried.
      * @param user the IAM User that the Access Keys belong to
      * @param keys the Access Keys to rotate
      */
-    private selfHeal = (user: string, keys: AccessKeyMetadata[]) => {
-        console.log(`Attempting to self-heal by deleting any inactive keys`);
-        return this.deleteKeys(user, keys, (key) => key.Status === INACTIVE)
-            .then(() => this.performCoreKeyRotation(user, keys));
+    private createNewKey = (user: string, keys: AccessKeyMetadata[]): Promise<AccessKey> => {
+        return this.createKey(user)
+            .catch((err) => {
+                console.error(`There was an error during key creation: ${JSON.stringify(err)}`);
+                console.log(`Attempting to self-heal by deleting any inactive keys`);
+                return this.deleteKeys(user, keys, (key) => key.Status === INACTIVE)
+                    .then(() => this.createKey(user));
+            });
     }
 
     /**
-     * Creates a new Access Key and updates the relevant CircleCI environment variables.
+     * Creates a new Access Key.
      * @param user the IAM User to create a new Access Key for
      */
-    private createNewKey = (user: string): Promise<AccessKey> => {
+    private createKey = (user: string): Promise<AccessKey> => {
         console.log(`Creating a new Access Key for ${user}`);
 
         const params: CreateAccessKeyRequest = {
@@ -138,23 +128,16 @@ export class KeyRotator {
      *                  otherwise
      */
     private deleteKeys = (user: string, keys: AccessKeyMetadata[], filter?: (key: AccessKeyMetadata) => boolean) => {
-        let keysToDelete = keys;
 
         // If a filter has been provided then apply it to the keyset
-        if (filter) {
-            keysToDelete = keys.filter((key) => filter(key));
-        }
+        const keysToDelete = filter ? keys.filter((key) => filter(key)) : keys;
 
         console.log(`The following keys will be deleted: ${JSON.stringify(keysToDelete)}`);
 
-        const promises: Array<Promise<PromiseResult<{}, AWSError>>> = [];
-        keysToDelete.forEach((key) => {
-            const p = this.deleteKey(user, key);
-            promises.push(p);
-        });
+        const promises: Array<Promise<void>> = [];
+        keysToDelete.forEach((key) => promises.push(this.deleteKey(user, key)));
 
-        return Promise.all(promises)
-            .then(() => { return; });
+        return Promise.all(promises);
     }
 
     /**
@@ -171,9 +154,6 @@ export class KeyRotator {
 
         return this.iam.deleteAccessKey(params)
             .promise()
-            .then((data) => {
-                console.log(`Deleted Access Key: ${params.AccessKeyId}`);
-                return data;
-            });
+            .then(() => console.log(`Deleted Access Key: ${params.AccessKeyId}`));
     }
 }
