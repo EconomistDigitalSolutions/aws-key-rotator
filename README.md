@@ -46,6 +46,7 @@ If any of the above steps fail then the [KeyRotator](#KeyRotator) will perform s
 2. Add imports in your code as required.
     ```typescript
     import { KeyRotator, NewKeyHandler } from "@economist/aws-key-rotator";
+    import { IAM } from "aws-sdk";
     ```
 3. Create an instance of an AWS [IAM](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/IAM.html) object.
    ```typescript
@@ -112,3 +113,7 @@ An interface for defining a custom function that handles the newly created Acces
 
 #### Returns
 A `Promise` the resolves with no data if the new key handling was successful and rejects with an error if it was not.
+
+# Examples
+
+You can find an example of the implementation using the AWS CLI [here](example-key-rotation-with-cli.ts).
