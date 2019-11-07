@@ -116,4 +116,4 @@ A `Promise` the resolves with no data if the new key handling was successful and
 
 # Examples
 
-You can find an example of the implementation using the AWS CLI [here](example-key-rotation-with-cli.ts).
+You can find an example of the implementation using the AWS CLI [here](example/key-rotation-with-cli.ts).
