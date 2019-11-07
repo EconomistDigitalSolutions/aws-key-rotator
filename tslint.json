@@ -11,5 +11,10 @@
         "max-line-length": false,
         "interface-name": false
     },
-    "rulesDirectory": []
+    "rulesDirectory": [],
+    "linterOptions": {
+        "exclude": [
+            "examples/*.ts"
+        ]
+    }
 }
